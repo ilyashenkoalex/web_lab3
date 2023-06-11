@@ -4,12 +4,14 @@
       <Btn :isInfo="true" class="w-[200px]">Добавить</Btn>
     </router-link>
     <div class="flex items-center">
-      <Input v-model="filterName" placeholder="Введите название для фильтрации" />
-      <Input v-model="filterDoctor" placeholder="Введите имя доктора для фильтрации" />
-      <Input v-model="filterDescription" placeholder="Введите описание для фильтрации" />
-      <Input v-model="filterCost" placeholder="Введите цену для фильтрации" />
+      <Input v-model="filterName" placeholder="Название" />
+      <Input v-model="filterDoctor" placeholder="Имя доктора" />
+      <Input v-model="filterDescription" placeholder="Описание" />
+      <Input v-model="filterMinPrice" placeholder="Минимальная цена" />
+      <Input v-model="filterCost" placeholder="Максимальная цена" />
+
     </div>
-    <Btn :isInfo="true" class="w-[200px]" @click="filterItems">Отфильтровать</Btn>
+    <!-- <Btn :isInfo="true" class="w-[200px]" @click="filterItems">Отфильтровать</Btn> -->
 
     <Table :onClickEdit="onClickEdit" :onClickRemove="onClickRemove" :tableHeaders="tableHeaders" :items="filteredItems" />
   </div>
@@ -39,6 +41,7 @@ export default {
     const filterName = ref('');
     const filterDoctor = ref('');
     const filterDescription = ref('');
+    const filterMinPrice = ref('');
     const filterCost = ref('');
 
     onMounted(() => {
@@ -56,9 +59,16 @@ export default {
 
     const filteredItems = ref([]);
 
-    watch(filteredItems, (newFilteredItems) => {
-      console.log('Отфильтрованные данные:', newFilteredItems);
-    }, { deep: true, immediate: true });
+    watch([items, filterName, filterDoctor, filterDescription, filterCost, filterMinPrice], ([itemsValue, filterNameValue, filterDoctorValue, filterDescriptionValue, filterCostValue, filterMinPriceValue]) => {
+      filteredItems.value = itemsValue.filter((item) => {
+        const nameMatch = !filterNameValue || item.name.includes(filterNameValue);
+        const doctorMatch = !filterDoctorValue || item.doctorname.includes(filterDoctorValue);
+        const descriptionMatch = !filterDescriptionValue || item.description.includes(filterDescriptionValue);
+        const costMatch = !filterCost.value || item.cost <= parseInt(filterCost.value);
+        const minPriceMatch = !filterMinPriceValue || item.cost >= parseInt(filterMinPriceValue);
+        return nameMatch && doctorMatch && descriptionMatch && costMatch && minPriceMatch;
+      });
+    }, { deep: true });
 
     const onClickRemove = (id) => {
       const isConfirmRemove = confirm('Вы действительно хотите удалить запись?');
@@ -72,14 +82,8 @@ export default {
     };
 
     const filterItems = () => {
-  filteredItems.value = items.value.filter((item) => {
-    const nameMatch = !filterName.value || item.name.includes(filterName.value);
-    const doctorMatch = !filterDoctor.value || item.doctorname.includes(filterDoctor.value);
-    const descriptionMatch = !filterDescription.value || item.description.includes(filterDescription.value);
-    const costMatch = !filterCost.value || item.cost < parseInt(filterCost.value);
-    return nameMatch && doctorMatch && descriptionMatch && costMatch;
-  });
-};
+      
+    };
 
     return {
       items,
@@ -88,6 +92,7 @@ export default {
       filterDoctor,
       filterDescription,
       filterCost,
+      filterMinPrice,
       tableHeaders,
       onClickRemove,
       onClickEdit,

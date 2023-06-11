@@ -17,7 +17,7 @@ export default {
   methods: {
     updateValue(newValue) {
       this.localValue = newValue;
-      this.$emit('update:value', newValue);
+      this.$emit('update:modelValue', newValue);
     },
   },
 };

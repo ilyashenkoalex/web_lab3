@@ -2,6 +2,7 @@
   <div class="space-y-10">
     <router-link :to="{ name: 'DoctorsEdit' }">
       <Btn :isInfo="true" class="w-[200px]">Добавить</Btn>
+      <Btn :isInfo="true" class="w-[200px]">Отфильтровать</Btn>
     </router-link>
 
     <Table

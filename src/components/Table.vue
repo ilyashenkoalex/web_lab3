@@ -36,11 +36,15 @@ import Btn from './Btn.vue';
 export default {
   name: 'Table',
   props: {
-    items: String,
-    tableHeaders: Array,
-    onClickEdit: Function,
-    onClickRemove: Function,
+  items: {
+    type: Array,
+    default: () => [],
   },
+  tableHeaders: Array,
+  onClickEdit: Function,
+  onClickRemove: Function,
+},
+
   computed: {
     colKeys() {
       return this.tableHeaders.map((key) => key);
